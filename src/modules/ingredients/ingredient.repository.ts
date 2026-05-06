@@ -33,6 +33,10 @@ export class IngredientRepository {
     return prisma.ingredient.update({ where: { id }, data })
   }
 
+  countRecipeUsages(id: string): Promise<number> {
+    return prisma.recipeIngredient.count({ where: { ingredientId: id } })
+  }
+
   delete(id: string): Promise<Ingredient> {
     return prisma.ingredient.delete({ where: { id } })
   }
