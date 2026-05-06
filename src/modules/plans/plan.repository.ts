@@ -55,6 +55,10 @@ export class PlanRepository {
     return prisma.planMeal.findMany({ where: { weekPlanId, locked: false } })
   }
 
+  deleteMeal(id: string): Promise<PlanMeal> {
+    return prisma.planMeal.delete({ where: { id } })
+  }
+
   getAllMealNames(weekPlanId: string): Promise<string[]> {
     return prisma.planMeal
       .findMany({ where: { weekPlanId }, include: { recipe: { select: { name: true } } } })
