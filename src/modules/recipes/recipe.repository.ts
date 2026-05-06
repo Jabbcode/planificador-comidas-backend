@@ -101,7 +101,10 @@ export class RecipeRepository {
     })
   }
 
-  delete(id: string): Promise<Recipe> {
-    return prisma.recipe.delete({ where: { id } })
+  async delete(id: string): Promise<Recipe> {
+    return prisma.$transaction(async (tx) => {
+      await tx.planMeal.deleteMany({ where: { recipeId: id } })
+      return tx.recipe.delete({ where: { id } })
+    })
   }
 }
