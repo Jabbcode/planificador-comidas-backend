@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Preference {
+  LIKED
+  DISLIKED
+  NEUTRAL
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+}
+
+model Ingredient {
+  id          String             @id @default(cuid())
+  name        String             @unique
+  category    String?
+  preference  Preference         @default(NEUTRAL)
+  createdAt   DateTime           @default(now())
+  recipeItems RecipeIngredient[]
+}
+
+model Recipe {
+  id           String             @id @default(cuid())
+  name         String
+  description  String?
+  instructions String?
+  prepTime     Int?
+  calories     Int?
+  servings     Int                @default(2)
+  mealType     MealType
+  imageUrl     String?
+  aiGenerated  Boolean            @default(false)
+  createdAt    DateTime           @default(now())
+  ingredients  RecipeIngredient[]
+  planMeals    PlanMeal[]
+}
+
+model RecipeIngredient {
+  id           String     @id @default(cuid())
+  recipeId     String
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredientId String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  quantity     Float?
+  unit         String?
+}
+
+model WeekPlan {
+  id        String     @id @default(cuid())
+  weekStart DateTime   @unique
+  createdAt DateTime   @default(now())
+  meals     PlanMeal[]
+}
+
+model PlanMeal {
+  id         String   @id @default(cuid())
+  weekPlanId String
+  weekPlan   WeekPlan @relation(fields: [weekPlanId], references: [id], onDelete: Cascade)
+  recipeId   String
+  recipe     Recipe   @relation(fields: [recipeId], references: [id])
+  dayOfWeek  Int
+  mealType   MealType
+  locked     Boolean  @default(false)
+  notes      String?
+
+  @@unique([weekPlanId, dayOfWeek, mealType])
+}

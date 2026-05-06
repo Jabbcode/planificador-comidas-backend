@@ -1,0 +1,238 @@
+{
+  "info": {
+    "name": "NutriPlan API",
+    "description": "API del planificador de comidas NutriPlan. Base URL: http://localhost:4000",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:4000", "type": "string" },
+    { "key": "ingredientId", "value": "", "type": "string" },
+    { "key": "recipeId", "value": "", "type": "string" },
+    { "key": "weekPlanId", "value": "", "type": "string" },
+    { "key": "mealId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health",
+            "description": "Verifica que el servidor esté corriendo"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ingredients",
+      "item": [
+        {
+          "name": "Get all ingredients",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/ingredients",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ingredients"],
+              "query": [
+                { "key": "preference", "value": "LIKED", "disabled": true, "description": "LIKED | DISLIKED | NEUTRAL" }
+              ]
+            },
+            "description": "Lista todos los ingredientes. Filtrar por preferencia con ?preference=LIKED|DISLIKED|NEUTRAL"
+          }
+        },
+        {
+          "name": "Get ingredient by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/ingredients/{{ingredientId}}"
+          }
+        },
+        {
+          "name": "Create ingredient",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/ingredients",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pollo\",\n  \"category\": \"proteína\",\n  \"preference\": \"LIKED\"\n}"
+            },
+            "description": "Crea un nuevo ingrediente. preference: LIKED | DISLIKED | NEUTRAL (default)"
+          }
+        },
+        {
+          "name": "Update ingredient",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/ingredients/{{ingredientId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"preference\": \"DISLIKED\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete ingredient",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/ingredients/{{ingredientId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Recipes",
+      "item": [
+        {
+          "name": "Get all recipes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/recipes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "recipes"],
+              "query": [
+                { "key": "mealType", "value": "LUNCH", "disabled": true, "description": "BREAKFAST | LUNCH | DINNER" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get recipe by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/recipes/{{recipeId}}"
+          }
+        },
+        {
+          "name": "Create recipe (manual)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/recipes",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ensalada César\",\n  \"mealType\": \"LUNCH\",\n  \"description\": \"Clásica ensalada César con pollo a la plancha\",\n  \"instructions\": \"1. Lavar la lechuga\\n2. Grillar el pollo\\n3. Mezclar con aderezo César\",\n  \"prepTime\": 20,\n  \"calories\": 380,\n  \"servings\": 2,\n  \"ingredients\": [\n    { \"name\": \"Lechuga romana\", \"quantity\": 200, \"unit\": \"g\", \"category\": \"verdura\" },\n    { \"name\": \"Pollo\", \"quantity\": 150, \"unit\": \"g\", \"category\": \"proteína\" },\n    { \"name\": \"Parmesano\", \"quantity\": 30, \"unit\": \"g\", \"category\": \"lácteo\" }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Generate recipe with AI",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/recipes/generate",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mealType\": \"DINNER\",\n  \"extraConstraints\": \"Que sea ligero y bajo en carbohidratos\"\n}"
+            },
+            "description": "Genera una receta con Claude AI basada en las preferencias de ingredientes del usuario"
+          }
+        },
+        {
+          "name": "Update recipe",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/recipes/{{recipeId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ensalada César mejorada\",\n  \"calories\": 350\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete recipe",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/recipes/{{recipeId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Plans",
+      "item": [
+        {
+          "name": "Get current week plan",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/plans/current",
+            "description": "Devuelve el plan de la semana actual. Lo crea vacío si no existe."
+          }
+        },
+        {
+          "name": "Get plan by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/plans/{{weekPlanId}}"
+          }
+        },
+        {
+          "name": "Generate full plan (AI)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/plans/generate",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"weekPlanId\": \"{{weekPlanId}}\"\n}"
+            },
+            "description": "Genera todas las comidas del plan con IA (respeta las que están bloqueadas). Si no se envía weekPlanId usa el plan actual."
+          }
+        },
+        {
+          "name": "Refresh unlocked meals (AI)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/plans/refresh",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"weekPlanId\": \"{{weekPlanId}}\"\n}"
+            },
+            "description": "Regenera solo las comidas NO bloqueadas del plan con IA"
+          }
+        },
+        {
+          "name": "Update meal (lock / notas / receta)",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/plans/meals/{{mealId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locked\": true,\n  \"notes\": \"Sin sal extra\"\n}"
+            },
+            "description": "Actualiza una comida del plan: bloquear/desbloquear, cambiar receta o añadir notas"
+          }
+        },
+        {
+          "name": "Swap meal (AI)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/plans/meals/{{mealId}}/swap",
+            "description": "Reemplaza una comida por una nueva receta generada con IA"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Shopping List",
+      "item": [
+        {
+          "name": "Get shopping list",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/plans/{{weekPlanId}}/shopping-list",
+            "description": "Devuelve la lista de compras del plan: ingredientes agrupados por categoría con cantidades sumadas"
+          }
+        }
+      ]
+    }
+  ]
+}
