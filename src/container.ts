@@ -1,4 +1,7 @@
 import { AnthropicProvider } from './ai/anthropic.provider'
+import { GeminiProvider } from './ai/gemini.provider'
+import { IAIProvider } from './ai/ai.types'
+import { env } from './config/env'
 import { IngredientRepository } from './modules/ingredients/ingredient.repository'
 import { IngredientService } from './modules/ingredients/ingredient.service'
 import { IngredientController } from './modules/ingredients/ingredient.controller'
@@ -12,7 +15,9 @@ import { ShoppingService } from './modules/shopping/shopping.service'
 import { ShoppingController } from './modules/shopping/shopping.controller'
 
 export function buildContainer() {
-  const aiProvider = new AnthropicProvider()
+  const aiProvider: IAIProvider = env.AI_PROVIDER === 'gemini'
+    ? new GeminiProvider()
+    : new AnthropicProvider()
 
   const ingredientRepo = new IngredientRepository()
   const ingredientService = new IngredientService(ingredientRepo)
