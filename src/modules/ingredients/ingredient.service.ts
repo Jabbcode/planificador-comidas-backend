@@ -1,5 +1,6 @@
 import { Ingredient, Preference } from '@prisma/client'
 import { IngredientRepository } from './ingredient.repository'
+import { AppError } from '../../utils/errors'
 
 export interface IIngredientService {
   getAll(preference?: Preference): Promise<Ingredient[]>
@@ -33,6 +34,13 @@ export class IngredientService implements IIngredientService {
 
   async remove(id: string): Promise<void> {
     await this.getById(id)
+    const usageCount = await this.repo.countRecipeUsages(id)
+    if (usageCount > 0) {
+      throw new AppError(
+        409,
+        `Este ingrediente está en uso en ${usageCount} receta${usageCount > 1 ? 's' : ''}. Edítalas antes de eliminarlo.`
+      )
+    }
     await this.repo.delete(id)
   }
 }

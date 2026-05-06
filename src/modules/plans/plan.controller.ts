@@ -51,4 +51,11 @@ export class PlanController {
       res.json(await this.service.swapMeal(req.params['mealId'] as string))
     } catch (err) { next(err) }
   }
+
+  deleteMeal = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await this.service.deleteMeal(req.params['mealId'] as string)
+      res.status(204).send()
+    } catch (err) { next(err) }
+  }
 }

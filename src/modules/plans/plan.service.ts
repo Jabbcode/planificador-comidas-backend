@@ -15,6 +15,7 @@ export interface IPlanService {
   refreshUnlocked(weekPlanId: string): Promise<WeekPlanFull>
   updateMeal(mealId: string, data: { locked?: boolean; recipeId?: string; notes?: string | null }): Promise<MealFull>
   swapMeal(mealId: string): Promise<MealFull>
+  deleteMeal(mealId: string): Promise<void>
 }
 
 export class PlanService implements IPlanService {
@@ -109,6 +110,10 @@ export class PlanService implements IPlanService {
 
   updateMeal(mealId: string, data: { locked?: boolean; recipeId?: string; notes?: string | null }): Promise<MealFull> {
     return this.planRepo.updateMeal(mealId, data) as Promise<MealFull>
+  }
+
+  async deleteMeal(mealId: string): Promise<void> {
+    await this.planRepo.deleteMeal(mealId)
   }
 
   async swapMeal(mealId: string): Promise<MealFull> {
