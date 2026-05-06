@@ -34,6 +34,9 @@ export class IngredientRepository {
   }
 
   delete(id: string): Promise<Ingredient> {
-    return prisma.ingredient.delete({ where: { id } })
+    return prisma.$transaction(async (tx) => {
+      await tx.recipeIngredient.deleteMany({ where: { ingredientId: id } })
+      return tx.ingredient.delete({ where: { id } })
+    })
   }
 }
