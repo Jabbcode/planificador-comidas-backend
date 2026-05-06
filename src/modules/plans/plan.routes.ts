@@ -11,5 +11,6 @@ export function planRouter(controller: PlanController): Router {
   router.post('/refresh', controller.refresh)
   router.put('/meals/:mealId', validate(updateMealSchema), controller.updateMeal)
   router.post('/meals/:mealId/swap', controller.swapMeal)
+  router.delete('/meals/:mealId', controller.deleteMeal)
   return router
 }
