@@ -218,6 +218,14 @@
             "url": "{{baseUrl}}/api/plans/meals/{{mealId}}/swap",
             "description": "Reemplaza una comida por una nueva receta generada con IA"
           }
+        },
+        {
+          "name": "Delete meal",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/plans/meals/{{mealId}}",
+            "description": "Elimina una comida del plan semanal dejando el slot vacío. Devuelve 204 No Content."
+          }
         }
       ]
     },
