@@ -1,7 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { z } from 'zod'
 import { IAIProvider, RecipeDraft, RecipeGenInput } from './ai.types'
-import { buildRecipePrompt } from './prompts'
+import { buildRecipePrompt, buildSystemPrompt } from './prompts'
 import { env } from '../config/env'
 
 const recipeDraftSchema = z.object({
@@ -34,7 +34,8 @@ export class AnthropicProvider implements IAIProvider {
 
     const message = await this.client.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1024,
+      max_tokens: 2048,
+      system: buildSystemPrompt(),
       messages: [{ role: 'user', content: prompt }],
     })
 
